@@ -12,7 +12,7 @@ pub trait App {
 #[derive(Clone, Debug)]
 pub enum AppInvokeError {
 	NeedMoreArgs { this: SubappTree },
-	WrongArg { this: SubappTree },
+	WrongArg { arg: String, this: SubappTree },
 }
 impl AppInvokeError {
 	pub fn pretty_print(&self) -> String {
@@ -22,7 +22,7 @@ impl AppInvokeError {
 		}
 	}
 }
-pub type AppInvokeResult = std::result::Result<Response, AppInvokeError>;
+pub type AppInvokeResult = std::result::Result<(), AppInvokeError>;
 
 #[derive(Clone, Debug)]
 pub struct SubappTree {

@@ -32,9 +32,7 @@ dependencies = [
  "app_common",
  "app_gym",
  "common",
- "module_calendar",
- "module_common",
- "module_execute",
+ "modules",
 ]
 
 [[package]]
@@ -74,6 +72,15 @@ dependencies = [
  "module_common",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "modules"
+version = "0.1.0"
+dependencies = [
+ "module_calendar",
+ "module_common",
+ "module_execute",
 ]
 
 [[package]]

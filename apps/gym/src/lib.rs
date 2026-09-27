@@ -26,8 +26,9 @@ impl App for GymApp {
 			"start" => GymStart::invoke(args, resp),
 			"end" => GymEnd::invoke(args, resp),
 			"status" => GymStatus::invoke(args, resp),
-			_ => Err(AppInvokeError::WrongArg {
+			arg => Err(AppInvokeError::WrongArg {
 				this: Self::subapp_tree(),
+				arg: arg.into(),
 			}),
 		}
 	}

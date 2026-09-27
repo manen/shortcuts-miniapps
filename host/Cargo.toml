@@ -7,6 +7,4 @@ edition = "2024"
 app_common.workspace = true
 app_gym.workspace = true
 common.workspace = true
-module_calendar.workspace = true
-module_common.workspace = true
-module_execute.workspace = true
+modules.workspace = true

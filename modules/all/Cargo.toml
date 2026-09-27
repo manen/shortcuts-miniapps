@@ -1,0 +1,9 @@
+[package]
+name = "modules"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+module_calendar.workspace = true
+module_common.workspace = true
+module_execute.workspace = true

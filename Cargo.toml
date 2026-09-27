@@ -5,6 +5,7 @@ members = [
 	"apps/gym",
 	"common",
 	"host",
+	"modules/all",
 	"modules/calendar",
 	"modules/common",
 	"modules/execute",
@@ -20,6 +21,7 @@ host.path = "./host"
 module_common.path = "./modules/common"
 module_execute.path = "./modules/execute"
 module_calendar.path = "./modules/calendar"
+modules.path = "./modules/all"
 
 app_common.path = "./apps/common"
 app_gym.path = "./apps/gym"
