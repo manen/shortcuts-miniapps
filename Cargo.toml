@@ -9,6 +9,7 @@ members = [
 	"modules/calendar",
 	"modules/common",
 	"modules/execute",
+	"modules/show",
 ]
 
 [workspace.dependencies]
@@ -21,6 +22,7 @@ host.path = "./host"
 module_common.path = "./modules/common"
 module_execute.path = "./modules/execute"
 module_calendar.path = "./modules/calendar"
+module_show.path = "./modules/show"
 modules.path = "./modules/all"
 
 app_common.path = "./apps/common"
