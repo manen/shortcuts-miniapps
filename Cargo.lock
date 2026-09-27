@@ -3,6 +3,21 @@
 version = 4
 
 [[package]]
+name = "app_common"
+version = "0.1.0"
+dependencies = [
+ "common",
+]
+
+[[package]]
+name = "app_gym"
+version = "0.1.0"
+dependencies = [
+ "app_common",
+ "common",
+]
+
+[[package]]
 name = "common"
 version = "0.1.0"
 dependencies = [
@@ -14,6 +29,8 @@ dependencies = [
 name = "host"
 version = "0.1.0"
 dependencies = [
+ "app_common",
+ "app_gym",
  "common",
  "module_calendar",
  "module_common",
