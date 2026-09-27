@@ -1,5 +1,6 @@
 use anyhow::Context;
 use app_common::{App, AppInvokeError, AppInvokeResult, SubappTree};
+use chrono::TimeDelta;
 use common::resp::Response;
 use modules::common::ResponseExt;
 use serde::{Deserialize, Serialize};
@@ -74,9 +75,12 @@ impl App for GymStart {
 			State::Started(date) => {
 				let date_formatted = date.format("%Y-%m-%d %H:%M:%S").to_string();
 
+				let elapsed = chrono::Local::now() - date;
+				let elapsed_formatted = timedelta_format(elapsed);
+
 				// let the user know we're not overriding the workout that's already happening
 				resp.push(modules::ShowNotificationCommand {
-					text: format!("there's already a workout going on!\nstarted {date_formatted}\n\nto start a new workout, end the one that's already started").into(),
+					text: format!("there's already a workout going on!\n⏰ {elapsed_formatted}\nstarted {date_formatted}\n\nto start a new workout, end the one that's already started").into(),
 					title:Some("gym".into()),
 					..Default::default()
 				});
@@ -131,20 +135,11 @@ impl App for GymEnd {
 				let end_time_formatted = end_time.format("%Y-%m-%d %H:%M:%S").to_string();
 
 				let elapsed = end_time - start_time;
-				let secs = elapsed.num_seconds();
-				let h = secs / 3600;
-				let m = (secs % 3600) / 60;
-				let s = secs % 60;
-
-				let s = if h <= 0 {
-					format!(" {s}s")
-				} else {
-					String::new()
-				};
+				let elapsed_formatted = timedelta_format(elapsed);
 
 				// show notif workout ended
 				resp.push(modules::ShowNotificationCommand {
-					text: format!("🎉 {h}h {m}m{s}").into(),
+					text: format!("🎉 {elapsed_formatted}").into(),
 					title: Some("gym".into()),
 					..Default::default()
 				});
@@ -184,7 +179,11 @@ impl App for GymStatus {
 		let text = match db.as_ref() {
 			State::Started(start_time) => {
 				let start_time_formatted = start_time.format("%Y-%m-%d %H:%M:%S").to_string();
-				format!("started at {start_time_formatted}")
+
+				let elapsed = chrono::Local::now() - start_time;
+				let elapsed_formatted = timedelta_format(elapsed);
+
+				format!("started at {start_time_formatted}\n\n⏰ {elapsed_formatted}")
 			}
 			State::Dormant => format!("not started"),
 		};
@@ -192,4 +191,18 @@ impl App for GymStatus {
 
 		Ok(())
 	}
+}
+
+fn timedelta_format(timedelta: TimeDelta) -> String {
+	let secs = timedelta.num_seconds();
+	let h = secs / 3600;
+	let m = (secs % 3600) / 60;
+	let s = secs % 60;
+
+	let s = if h <= 0 {
+		format!(" {s}s")
+	} else {
+		String::new()
+	};
+	format!("{h}h {m}m{s}")
 }
