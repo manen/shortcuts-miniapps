@@ -4,7 +4,9 @@ use common::resp::Response;
 
 pub trait App {
 	fn subapp_tree() -> SubappTree;
-	fn invoke(args: impl Iterator<Item = String>) -> AppInvokeResult;
+
+	/// if this returns an error, response will be appended with appropriate error actions
+	fn invoke(args: impl Iterator<Item = String>, response: &mut Response) -> AppInvokeResult;
 }
 
 #[derive(Clone, Debug)]

@@ -34,6 +34,7 @@ dependencies = [
  "common",
  "module_calendar",
  "module_common",
+ "module_execute",
 ]
 
 [[package]]
@@ -62,6 +63,15 @@ name = "module_common"
 version = "0.1.0"
 dependencies = [
  "common",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "module_execute"
+version = "0.1.0"
+dependencies = [
+ "module_common",
  "serde",
  "serde_json",
 ]

@@ -1,4 +1,5 @@
 use app_common::{App, AppInvokeError, AppInvokeResult, SubappTree};
+use common::resp::Response;
 
 pub struct GymApp;
 impl App for GymApp {
@@ -14,14 +15,17 @@ impl App for GymApp {
 		}
 	}
 
-	fn invoke(mut args: impl Iterator<Item = String>) -> app_common::AppInvokeResult {
+	fn invoke(
+		mut args: impl Iterator<Item = String>,
+		resp: &mut Response,
+	) -> app_common::AppInvokeResult {
 		let next = args.next().ok_or(AppInvokeError::NeedMoreArgs {
 			this: Self::subapp_tree(),
 		})?;
 		match next.as_ref() {
-			"start" => GymStart::invoke(args),
-			"end" => GymEnd::invoke(args),
-			"status" => GymStatus::invoke(args),
+			"start" => GymStart::invoke(args, resp),
+			"end" => GymEnd::invoke(args, resp),
+			"status" => GymStatus::invoke(args, resp),
 			_ => Err(AppInvokeError::WrongArg {
 				this: Self::subapp_tree(),
 			}),
@@ -42,7 +46,7 @@ impl App for GymStart {
 		}
 	}
 
-	fn invoke(args: impl Iterator<Item = String>) -> AppInvokeResult {
+	fn invoke(args: impl Iterator<Item = String>, resp: &mut Response) -> AppInvokeResult {
 		todo!()
 	}
 }
@@ -57,7 +61,7 @@ impl App for GymEnd {
 		}
 	}
 
-	fn invoke(args: impl Iterator<Item = String>) -> AppInvokeResult {
+	fn invoke(args: impl Iterator<Item = String>, resp: &mut Response) -> AppInvokeResult {
 		todo!()
 	}
 }
@@ -70,7 +74,7 @@ impl App for GymStatus {
 		}
 	}
 
-	fn invoke(args: impl Iterator<Item = String>) -> AppInvokeResult {
+	fn invoke(args: impl Iterator<Item = String>, resp: &mut Response) -> AppInvokeResult {
 		todo!()
 	}
 }
