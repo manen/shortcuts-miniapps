@@ -1,0 +1,13 @@
+.venv
+__pycache__
+/target
+
+thankss.py
+credentials.txt
+timetable.ical
+*.log
+absences*.cache
+absences*.svg
+absences*.html
+
+.k8

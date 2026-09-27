@@ -1,0 +1,9 @@
+[package]
+name = "host"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+common.workspace = true
+module_calendar.workspace = true
+module_common = { version = "0.1.0", path = "../modules/common" }
