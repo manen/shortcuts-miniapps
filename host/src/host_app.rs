@@ -48,6 +48,13 @@ pub fn host_app<A: App>() {
 			// show menu containing the args that could be next
 			resp.push(prompt_for_menu(&args_so_far, &this))
 		}
+
+		Err(AppInvokeError::Anyhow(err)) => {
+			// tell user we fucked up
+			resp.push(modules::ShowResultCommandText {
+				text: format!("this app encountered an error\n{err}\n\n{err:#?}\n\nsorry"),
+			})
+		}
 	}
 
 	let resp_serialized = resp.serialize();

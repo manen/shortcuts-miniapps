@@ -9,18 +9,15 @@ pub trait App {
 	fn invoke(args: impl Iterator<Item = String>, response: &mut Response) -> AppInvokeResult;
 }
 
-#[derive(Clone, Debug)]
+#[derive(Debug, thiserror::Error)]
 pub enum AppInvokeError {
+	#[error("need more args")]
 	NeedMoreArgs { this: SubappTree },
+	#[error("wrong arg supplied")]
 	WrongArg { arg: String, this: SubappTree },
-}
-impl AppInvokeError {
-	pub fn pretty_print(&self) -> String {
-		match self {
-			Self::NeedMoreArgs { .. } => format!("need more args"),
-			Self::WrongArg { .. } => format!("wrong arg"),
-		}
-	}
+
+	#[error("{0}")]
+	Anyhow(#[from] anyhow::Error),
 }
 pub type AppInvokeResult = std::result::Result<(), AppInvokeError>;
 

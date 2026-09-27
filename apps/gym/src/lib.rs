@@ -1,5 +1,9 @@
+use anyhow::Context;
 use app_common::{App, AppInvokeError, AppInvokeResult, SubappTree};
 use common::resp::Response;
+use modules::common::ResponseExt;
+use serde::{Deserialize, Serialize};
+use util_db::Db;
 
 pub struct GymApp;
 impl App for GymApp {
@@ -34,6 +38,22 @@ impl App for GymApp {
 	}
 }
 
+// --
+
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
+pub enum State {
+	/// there's no workout going on
+	#[default]
+	Dormant,
+	Started(chrono::DateTime<chrono::Local>),
+}
+
+fn db() -> anyhow::Result<Db<State>> {
+	let db = util_db::db("gym")
+		.with_context(|| format!("while opening gym db to fulfill a gym request"))?;
+	Ok(db)
+}
+
 pub struct GymStart;
 pub struct GymEnd;
 pub struct GymStatus;
@@ -48,9 +68,39 @@ impl App for GymStart {
 	}
 
 	fn invoke(args: impl Iterator<Item = String>, resp: &mut Response) -> AppInvokeResult {
-		todo!()
+		let mut db = db()?;
+
+		match db.as_ref() {
+			State::Started(date) => {
+				let date_formatted = date.format("%Y-%m-%d %H:%M:%S").to_string();
+
+				// let the user know we're not overriding the workout that's already happening
+				resp.push(modules::ShowNotificationCommand {
+					text: format!("there's already a workout going on!\nstarted {date_formatted}\n\nto start a new workout, end the one that's already started").into(),
+					title:Some("gym".into()),
+					..Default::default()
+				});
+				return Ok(());
+			}
+			_ => {}
+		}
+
+		let now = chrono::Local::now();
+		let now_formatted = now.format("%Y-%m-%d %H:%M:%S").to_string();
+		db.mutate(|data| *data = State::Started(now))
+			.with_context(|| format!("while writing workout start time to db"))?;
+
+		// let the user know it started
+		resp.push(modules::ShowNotificationCommand {
+			text: format!("workout started at {now_formatted}").into(),
+			title: Some("gym".into()),
+			..Default::default()
+		});
+
+		Ok(())
 	}
 }
+
 impl App for GymEnd {
 	fn subapp_tree() -> SubappTree {
 		SubappTree {
@@ -63,9 +113,62 @@ impl App for GymEnd {
 	}
 
 	fn invoke(args: impl Iterator<Item = String>, resp: &mut Response) -> AppInvokeResult {
-		todo!()
+		let mut db = db()?;
+
+		let old_state = db
+			.mutate(|data| {
+				let mut swap = State::Dormant;
+				std::mem::swap(data, &mut swap);
+				swap
+			})
+			.with_context(|| "while accessing and writing workout end to db")?;
+
+		match old_state {
+			State::Started(start_time) => {
+				let end_time = chrono::Local::now();
+
+				let start_time_formatted = start_time.format("%Y-%m-%d %H:%M:%S").to_string();
+				let end_time_formatted = end_time.format("%Y-%m-%d %H:%M:%S").to_string();
+
+				let elapsed = end_time - start_time;
+				let secs = elapsed.num_seconds();
+				let h = secs / 3600;
+				let m = (secs % 3600) / 60;
+				let s = secs % 60;
+
+				let s = if h <= 0 {
+					format!(" {s}s")
+				} else {
+					String::new()
+				};
+
+				// show notif workout ended
+				resp.push(modules::ShowNotificationCommand {
+					text: format!("🎉 {h}h {m}m{s}").into(),
+					title: Some("gym".into()),
+					..Default::default()
+				});
+				// add workout to calendar
+				resp.push(modules::NewEventCommand {
+					title: "gym".into(),
+					start_time: start_time_formatted.into(),
+					end_time: end_time_formatted.into(),
+					..Default::default()
+				});
+			}
+			State::Dormant => {
+				// tell user we're not doing shit
+				resp.push(modules::ShowNotificationCommand {
+					text: "no workout was started anyway".into(),
+					..Default::default()
+				})
+			}
+		}
+
+		Ok(())
 	}
 }
+
 impl App for GymStatus {
 	fn subapp_tree() -> SubappTree {
 		SubappTree {
@@ -76,6 +179,17 @@ impl App for GymStatus {
 	}
 
 	fn invoke(args: impl Iterator<Item = String>, resp: &mut Response) -> AppInvokeResult {
-		todo!()
+		let db = db()?;
+
+		let text = match db.as_ref() {
+			State::Started(start_time) => {
+				let start_time_formatted = start_time.format("%Y-%m-%d %H:%M:%S").to_string();
+				format!("started at {start_time_formatted}")
+			}
+			State::Dormant => format!("not started"),
+		};
+		resp.push(modules::ShowResultCommandText { text });
+
+		Ok(())
 	}
 }
