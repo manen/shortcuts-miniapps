@@ -3,6 +3,7 @@ use common::resp::Response;
 use std::fmt::Write;
 
 mod branching;
+mod invoking;
 
 pub trait App {
 	fn subapp_tree() -> SubappTree;
