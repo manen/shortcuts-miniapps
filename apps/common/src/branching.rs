@@ -31,7 +31,7 @@ macro_rules! branching_app {
 				resp: &mut Response,
 			) -> app_common::AppInvokeResult {
 				let next = args.next().ok_or(
-					AppInvokeError::NeedMoreArgs {
+					app_common::AppInvokeError::NeedMoreArgs {
 						this: Self::subapp_tree(),
 					}
 				)?;
@@ -40,7 +40,7 @@ macro_rules! branching_app {
 					$(
 						$child_name => $child::invoke(args, resp),
 					)*
-					arg => Err(AppInvokeError::WrongArg {
+					arg => Err(app_common::AppInvokeError::WrongArg {
 						this: Self::subapp_tree(),
 						arg: arg.into(),
 					}),

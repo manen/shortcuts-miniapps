@@ -65,11 +65,17 @@ fn prompt_for_menu(
 	args_prefix: &str,
 	this: &SubappTree,
 ) -> modules::MenuAndExecuteCommand<'static> {
+	let args_prefix = if args_prefix.len() == 0 {
+		String::new()
+	} else {
+		format!("{args_prefix} ")
+	};
+
 	let possible_args = this
 		.children
 		.iter()
 		.map(|a| (a.name, a.desc.unwrap_or(a.name)))
-		.map(|(name, desc)| (format!("{args_prefix} {name}"), desc))
+		.map(|(name, desc)| (format!("{args_prefix}{name}"), desc))
 		.map(|(name, desc)| (name.into(), desc.into()));
 
 	let desc = match this.desc {
