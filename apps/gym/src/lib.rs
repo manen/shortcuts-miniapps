@@ -1,6 +1,5 @@
 use anyhow::Context;
 use app_common::{App, AppInvokeError, AppInvokeResult, SubappTree};
-use chrono::TimeDelta;
 use common::resp::Response;
 use modules::common::ResponseExt;
 use serde::{Deserialize, Serialize};
@@ -76,7 +75,7 @@ impl App for GymStart {
 				let date_formatted = date.format("%Y-%m-%d %H:%M:%S").to_string();
 
 				let elapsed = chrono::Local::now() - date;
-				let elapsed_formatted = timedelta_format(elapsed);
+				let elapsed_formatted = util_time::format_timedelta::hms(elapsed);
 
 				// let the user know we're not overriding the workout that's already happening
 				resp.push(modules::ShowNotificationCommand {
@@ -131,11 +130,11 @@ impl App for GymEnd {
 			State::Started(start_time) => {
 				let end_time = chrono::Local::now();
 
-				let start_time_formatted = start_time.format("%Y-%m-%d %H:%M:%S").to_string();
-				let end_time_formatted = end_time.format("%Y-%m-%d %H:%M:%S").to_string();
+				let start_time_formatted = util_time::format_datetime::long(&start_time);
+				let end_time_formatted = util_time::format_datetime::long(&end_time);
 
 				let elapsed = end_time - start_time;
-				let elapsed_formatted = timedelta_format(elapsed);
+				let elapsed_formatted = util_time::format_timedelta::hms(elapsed);
 
 				// show notif workout ended
 				resp.push(modules::ShowNotificationCommand {
@@ -181,7 +180,7 @@ impl App for GymStatus {
 				let start_time_formatted = start_time.format("%Y-%m-%d %H:%M:%S").to_string();
 
 				let elapsed = chrono::Local::now() - start_time;
-				let elapsed_formatted = timedelta_format(elapsed);
+				let elapsed_formatted = util_time::format_timedelta::hms(elapsed);
 
 				format!("started at {start_time_formatted}\n\n⏰ {elapsed_formatted}")
 			}
@@ -191,18 +190,4 @@ impl App for GymStatus {
 
 		Ok(())
 	}
-}
-
-fn timedelta_format(timedelta: TimeDelta) -> String {
-	let secs = timedelta.num_seconds();
-	let h = secs / 3600;
-	let m = (secs % 3600) / 60;
-	let s = secs % 60;
-
-	let s = if h <= 0 {
-		format!(" {s}s")
-	} else {
-		String::new()
-	};
-	format!("{h}h {m}m{s}")
 }
