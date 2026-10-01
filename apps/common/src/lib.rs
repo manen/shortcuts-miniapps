@@ -24,11 +24,17 @@ pub enum AppInvokeError {
 pub type AppInvokeResult = std::result::Result<(), AppInvokeError>;
 
 #[derive(Clone, Debug)]
+pub enum SubappReach {
+	Literal(&'static str),
+	Fallback,
+}
+
+#[derive(Clone, Debug)]
 pub struct SubappTree {
 	/// no spaces!
 	pub name: &'static str,
 	pub desc: Option<&'static str>,
-	pub children: Vec<SubappTree>,
+	pub children: Vec<(SubappReach, SubappTree)>,
 }
 impl SubappTree {
 	pub fn pretty_print(&self) -> Result<String, std::fmt::Error> {
@@ -45,12 +51,20 @@ impl SubappTree {
 
 		writeln!(&mut buf, "")?;
 
-		for c in self.children.iter() {
-			let desc = match c.desc {
+		for (reach, child) in self.children.iter() {
+			let child_desc = match child.desc {
 				Some(desc) => format!(": {desc}"),
 				None => String::new(),
 			};
-			writeln!(&mut buf, "{} {}{}", self.name, c.name, desc)?;
+
+			match reach {
+				SubappReach::Literal(child_name) => {
+					writeln!(&mut buf, "{} {child_name}{child_desc}", self.name)?;
+				}
+				SubappReach::Fallback => {
+					writeln!(&mut buf, "{} <arg handled by app>{child_desc}", self.name)?;
+				}
+			}
 		}
 
 		Ok(buf)

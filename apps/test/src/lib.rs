@@ -2,7 +2,7 @@ use app_common::{App, SubappTree, resp::Response};
 use modules::common::ResponseExt;
 
 app_common::branching_app!(
-	TestApp = "test", Some("geci"),
+	TestApp, Some("geci"),
 
 	"new_event" => TestNewEvent,
 	"nested" => TestNested

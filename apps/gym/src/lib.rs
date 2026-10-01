@@ -1,5 +1,5 @@
 use anyhow::Context;
-use app_common::{App, AppInvokeError, AppInvokeResult, SubappTree};
+use app_common::{App, AppInvokeResult, SubappTree};
 use common::resp::Response;
 use modules::common::ResponseExt;
 use serde::{Deserialize, Serialize};
@@ -7,7 +7,7 @@ use util_db::Db;
 
 // declare GymApp
 app_common::branching_app!(
-	GymApp = "gym", Some("gym app"),
+	GymApp, Some("gym app"),
 
 	"start" => GymStart,
 	"end" => GymEnd,

@@ -20,7 +20,7 @@ macro_rules! branching_app {
 					desc: $desc,
 					children: vec![
 						$(
-							$child::subapp_tree(),
+							(app_common::SubappReach::Literal($child_name), $child::subapp_tree()),
 						)*
 					],
 				}

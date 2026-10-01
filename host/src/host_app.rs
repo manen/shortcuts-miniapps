@@ -1,6 +1,6 @@
-use app_common::{App, AppInvokeError, SubappTree};
+use app_common::{App, AppInvokeError, SubappReach, SubappTree};
 use common::resp::Response;
-use modules::common::ResponseExt;
+use modules::{common::ResponseExt, extras::MenuAndExecuteOption};
 
 use crate::AppRoot;
 
@@ -71,21 +71,49 @@ fn prompt_for_menu(
 		format!("{args_prefix} ")
 	};
 
+	// let possible_args = this
+	// 	.children
+	// 	.iter()
+	// 	.map(|a| (a.name, a.desc.unwrap_or(a.name)))
+	// 	.map(|(name, desc)| (format!("{args_prefix}{name}"), desc))
+	// 	.map(|(name, desc)| (name.into(), desc.into()));
+
+	let mut has_fallback = false;
 	let possible_args = this
 		.children
 		.iter()
-		.map(|a| (a.name, a.desc.unwrap_or(a.name)))
-		.map(|(name, desc)| (format!("{args_prefix}{name}"), desc))
-		.map(|(name, desc)| (name.into(), desc.into()));
+		.filter_map(|(reach, child)| match reach {
+			SubappReach::Literal(new_arg) => {
+				// create menu option for this child
+				Some(MenuAndExecuteOption {
+					name: child.name.into(),
+					desc: child.desc.unwrap_or_default().into(),
+					execute: modules::ExecuteCommand {
+						args: format!("{args_prefix}{new_arg}").into(),
+						stdin: "".into(),
+					},
+				})
+			}
+			SubappReach::Fallback => {
+				has_fallback = true;
+				None
+			}
+		});
+	let possible_args = possible_args.collect();
 
 	let desc = match this.desc {
 		Some(desc) => format!("\n{desc}"),
 		None => String::new(),
 	};
+	let fallback_note = if has_fallback {
+		"\naccepts other arguments not listed here"
+	} else {
+		""
+	};
 
 	// show menu containing the args that could be next
 	modules::MenuAndExecuteCommand {
-		prompt: Some(format!("options for {}{}", this.name, desc).into()),
-		options: possible_args.collect(),
+		prompt: Some(format!("{}{}{fallback_note}", this.name, desc).into()),
+		options: possible_args,
 	}
 }

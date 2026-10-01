@@ -1,4 +1,4 @@
-use app_common::{App, AppInvokeError, SubappTree};
+use app_common::App;
 use app_gym::GymApp;
 use app_test::TestApp;
 use common::resp::Response;
