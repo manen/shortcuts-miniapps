@@ -1,11 +1,8 @@
 [package]
-name = "host"
+name = "app_test"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 app_common.workspace = true
-app_gym.workspace = true
-app_test.workspace = true
-common.workspace = true
 modules.workspace = true

@@ -42,6 +42,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "app_test"
+version = "0.1.0"
+dependencies = [
+ "app_common",
+ "modules",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -133,6 +141,7 @@ version = "0.1.0"
 dependencies = [
  "app_common",
  "app_gym",
+ "app_test",
  "common",
  "modules",
 ]

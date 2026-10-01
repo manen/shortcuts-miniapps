@@ -1,12 +1,12 @@
-use std::fmt::Write;
-
+pub use common::resp;
 use common::resp::Response;
+use std::fmt::Write;
 
 pub trait App {
 	fn subapp_tree() -> SubappTree;
 
 	/// if this returns an error, response will be appended with appropriate error actions
-	fn invoke(args: impl Iterator<Item = String>, response: &mut Response) -> AppInvokeResult;
+	fn invoke(args: impl Iterator<Item = String>, resp: &mut Response) -> AppInvokeResult;
 }
 
 #[derive(Debug, thiserror::Error)]

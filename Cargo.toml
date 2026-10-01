@@ -3,6 +3,7 @@ resolver = "3"
 members = [
 	"apps/common",
 	"apps/gym",
+	"apps/test",
 	"common",
 	"host",
 	"modules/all",
@@ -33,4 +34,5 @@ module_show.path = "./modules/show"
 modules.path = "./modules/all"
 
 app_common.path = "./apps/common"
+app_test.path = "./apps/test"
 app_gym.path = "./apps/gym"
