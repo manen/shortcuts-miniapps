@@ -10,6 +10,7 @@ pub struct NewEventCommand<'a> {
 	pub end_time: Cow<'a, str>,
 
 	pub location: Cow<'a, str>,
+	pub notes: Cow<'a, str>,
 	pub all_day: bool,
 
 	pub show_compose_sheet: bool,
