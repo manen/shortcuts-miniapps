@@ -5,40 +5,16 @@ use modules::common::ResponseExt;
 use serde::{Deserialize, Serialize};
 use util_db::Db;
 
-pub struct GymApp;
-impl App for GymApp {
-	fn subapp_tree() -> app_common::SubappTree {
-		SubappTree {
-			name: "gym",
-			desc: Some("gym start, end, status"),
-			children: vec![
-				GymStart::subapp_tree(),
-				GymEnd::subapp_tree(),
-				GymStatus::subapp_tree(),
-			],
-		}
-	}
+// declare GymApp
+app_common::branching_app!(
+	GymApp = "gym", Some("gym app"),
 
-	fn invoke(
-		mut args: impl Iterator<Item = String>,
-		resp: &mut Response,
-	) -> app_common::AppInvokeResult {
-		let next = args.next().ok_or(AppInvokeError::NeedMoreArgs {
-			this: Self::subapp_tree(),
-		})?;
-		match next.as_ref() {
-			"start" => GymStart::invoke(args, resp),
-			"end" => GymEnd::invoke(args, resp),
-			"status" => GymStatus::invoke(args, resp),
-			arg => Err(AppInvokeError::WrongArg {
-				this: Self::subapp_tree(),
-				arg: arg.into(),
-			}),
-		}
-	}
-}
+	"start" => GymStart,
+	"end" => GymEnd,
+	"status" => GymStatus
+);
 
-// --
+// ---
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
 pub enum State {

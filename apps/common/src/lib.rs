@@ -2,6 +2,8 @@ pub use common::resp;
 use common::resp::Response;
 use std::fmt::Write;
 
+mod branching;
+
 pub trait App {
 	fn subapp_tree() -> SubappTree;
 
