@@ -43,12 +43,12 @@ impl App for GymStart {
 		}
 	}
 
-	fn invoke(args: impl Iterator<Item = String>, resp: &mut Response) -> AppInvokeResult {
+	fn invoke(_args: impl Iterator<Item = String>, resp: &mut Response) -> AppInvokeResult {
 		let mut db = db()?;
 
 		match db.as_ref() {
 			State::Started(date) => {
-				let date_formatted = date.format("%Y-%m-%d %H:%M:%S").to_string();
+				let date_formatted = util_time::format_datetime::long(date);
 
 				let elapsed = chrono::Local::now() - date;
 				let elapsed_formatted = util_time::format_timedelta::hms(elapsed);
@@ -65,7 +65,7 @@ impl App for GymStart {
 		}
 
 		let now = chrono::Local::now();
-		let now_formatted = now.format("%Y-%m-%d %H:%M:%S").to_string();
+		let now_formatted = util_time::format_datetime::long(&now);
 		db.mutate(|data| *data = State::Started(now))
 			.with_context(|| format!("while writing workout start time to db"))?;
 
@@ -91,7 +91,7 @@ impl App for GymEnd {
 		}
 	}
 
-	fn invoke(args: impl Iterator<Item = String>, resp: &mut Response) -> AppInvokeResult {
+	fn invoke(_args: impl Iterator<Item = String>, resp: &mut Response) -> AppInvokeResult {
 		let mut db = db()?;
 
 		let old_state = db
@@ -148,12 +148,12 @@ impl App for GymStatus {
 		}
 	}
 
-	fn invoke(args: impl Iterator<Item = String>, resp: &mut Response) -> AppInvokeResult {
+	fn invoke(_args: impl Iterator<Item = String>, resp: &mut Response) -> AppInvokeResult {
 		let db = db()?;
 
 		let text = match db.as_ref() {
 			State::Started(start_time) => {
-				let start_time_formatted = start_time.format("%Y-%m-%d %H:%M:%S").to_string();
+				let start_time_formatted = util_time::format_datetime::long(&start_time);
 
 				let elapsed = chrono::Local::now() - start_time;
 				let elapsed_formatted = util_time::format_timedelta::hms(elapsed);

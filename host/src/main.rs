@@ -6,13 +6,13 @@ use common::resp::Response;
 mod host_app;
 use host_app::host_app;
 
-fn main() {
-	host_app::<AppRoot>();
-}
-
 app_common::branching_app!(
 	AppRoot, None,
 
 	"gym" => GymApp,
 	"test" => TestApp,
 );
+
+fn main() {
+	host_app::<AppRoot>();
+}
