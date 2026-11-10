@@ -1,6 +1,6 @@
 pub use common::resp;
 use common::resp::Response;
-use std::fmt::Write;
+use std::{borrow::Cow, fmt::Write};
 
 mod branching;
 mod invoking;
@@ -26,7 +26,7 @@ pub type AppInvokeResult = std::result::Result<(), AppInvokeError>;
 
 #[derive(Clone, Debug)]
 pub enum SubappReach {
-	Literal(&'static str),
+	Literal(Cow<'static, str>),
 	Fallback,
 }
 

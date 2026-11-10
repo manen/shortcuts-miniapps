@@ -27,6 +27,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "app_date_tracker"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "app_common",
+ "chrono",
+ "modules",
+ "serde",
+ "util_db",
+ "util_time",
+]
+
+[[package]]
 name = "app_gym"
 version = "0.1.0"
 dependencies = [
@@ -140,6 +153,7 @@ name = "host"
 version = "0.1.0"
 dependencies = [
  "app_common",
+ "app_date_tracker",
  "app_gym",
  "app_test",
  "common",

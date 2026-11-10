@@ -1,7 +1,8 @@
 [workspace]
 resolver = "3"
 members = [
-	"apps/common",
+	"apps/common", 
+	"apps/date_tracker",
 	"apps/gym",
 	"apps/test",
 	"common",
@@ -9,7 +10,7 @@ members = [
 	"modules/all",
 	"modules/calendar",
 	"modules/common",
-	"modules/execute",
+	"modules/execute", 
 	"modules/show",
 	"utils/db",
 	"utils/time",
@@ -36,3 +37,4 @@ modules.path = "./modules/all"
 app_common.path = "./apps/common"
 app_test.path = "./apps/test"
 app_gym.path = "./apps/gym"
+app_date_tracker.path = "./apps/date_tracker"

@@ -1,0 +1,13 @@
+[package]
+name = "app_date_tracker"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow.workspace = true
+app_common.workspace = true
+chrono.workspace = true
+modules.workspace = true
+serde.workspace = true
+util_db.workspace = true
+util_time.workspace = true

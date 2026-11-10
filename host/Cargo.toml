@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 app_common.workspace = true
+app_date_tracker.workspace = true
 app_gym.workspace = true
 app_test.workspace = true
 common.workspace = true
