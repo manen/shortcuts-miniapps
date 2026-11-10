@@ -1,10 +1,8 @@
-use std::borrow::Cow;
-
 use anyhow::Context;
-use app_common::{App, AppInvokeResult, SubappReach, SubappTree, resp::Response};
+use app_common::{App, AppInvokeResult, resp::Response};
 use modules::{ExecuteCommand, common::ResponseExt, extras::MenuAndExecuteOption};
 use serde::{Deserialize, Serialize};
-use util_db::{Data, Db};
+use util_db::Db;
 
 app_common::branching_app!(
 	DateTrackerApp, Some("track dates and times of whatever"),
@@ -29,7 +27,7 @@ fn db(event_type: &str) -> anyhow::Result<Db<EventTypeEntry>> {
 
 app_common::invoking_app!(
 	TrackEventWhatType = "track_event",
-	None,
+	Some("track event"),
 	track_event_what_type
 );
 fn track_event_what_type(
@@ -76,7 +74,7 @@ fn track_event_what_type(
 							.unwrap_or_else(|| &db_name)
 							.to_string();
 
-						println!("{name_clean}");
+						// println!("{name_clean}");
 
 						let opt = MenuAndExecuteOption {
 							name: name_clean.clone().into(),
@@ -86,7 +84,7 @@ fn track_event_what_type(
 								stdin: "".into(),
 							},
 						};
-						println!("{opt:#?}");
+						// println!("{opt:#?}");
 
 						opt
 					})
@@ -102,12 +100,12 @@ fn track_event_what_type(
 
 app_common::invoking_app!(
 	TrackEventConfirm = "track_event_confirm",
-	None,
+	Some("track event confirm don't use this one actually"),
 	track_event_confirm
 );
 fn track_event_confirm(
 	mut args: impl Iterator<Item = String>,
-	resp: &mut Response,
+	_resp: &mut Response,
 ) -> AppInvokeResult {
 	// resp.push(modules::ShowResultCommandText {
 	// 	text: args.collect::<Vec<String>>().join(" "),

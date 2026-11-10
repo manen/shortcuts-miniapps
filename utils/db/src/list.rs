@@ -38,7 +38,8 @@ pub fn dbs_list(dir: &str) -> Result<impl Iterator<Item = String>> {
 		checked_for_file.map(|entry| String::from(entry.file_name().to_string_lossy()));
 	let checked_for_json = names_only.filter(|name| name.ends_with(".json"));
 
-	let absolute = checked_for_json.map(move |name| format!("{dir}/{name}"));
+	let absolute = checked_for_json
+		.map(move |name| format!("{dir}/{}", name.strip_suffix(".json").unwrap_or(&name)));
 
 	Ok(absolute)
 }
