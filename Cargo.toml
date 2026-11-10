@@ -10,7 +10,8 @@ members = [
 	"modules/all",
 	"modules/calendar",
 	"modules/common",
-	"modules/execute", 
+	"modules/execute",
+	"modules/notes", 
 	"modules/show",
 	"utils/db",
 	"utils/time",
@@ -32,6 +33,7 @@ module_common.path = "./modules/common"
 module_execute.path = "./modules/execute"
 module_calendar.path = "./modules/calendar"
 module_show.path = "./modules/show"
+module_notes.path = "./modules/notes"
 modules.path = "./modules/all"
 
 app_common.path = "./apps/common"

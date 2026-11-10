@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use anyhow::Context;
 use app_common::{App, AppInvokeResult, resp::Response};
 use modules::{ExecuteCommand, common::ResponseExt, extras::MenuAndExecuteOption};
@@ -12,7 +14,11 @@ app_common::branching_app!(
 );
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
+/// this is what's saved in the database
 pub struct EventTypeEntry {
+	/// if set, also appends the new line to a note on the iphone \
+	/// this is to keep a backup or something
+	corresponding_note_title: Option<String>,
 	list: Vec<String>,
 }
 
@@ -105,25 +111,35 @@ app_common::invoking_app!(
 );
 fn track_event_confirm(
 	mut args: impl Iterator<Item = String>,
-	_resp: &mut Response,
+	resp: &mut Response,
 ) -> AppInvokeResult {
-	// resp.push(modules::ShowResultCommandText {
-	// 	text: args.collect::<Vec<String>>().join(" "),
-	// });
-
+	// extract info from args
 	let type_name = args
 		.next()
 		.ok_or_else(|| anyhow::anyhow!("no db name provided"))?;
 
 	let to_append = args.collect::<Vec<String>>().join(" ");
 
+	// write to db
 	let mut db = db(&type_name)?;
 	db.mutate(|db| {
 		db.list.push(to_append.clone());
 	})
 	.with_context(|| format!("while mutating db to append {to_append} to {type_name}"))?;
 
-	// ok just do the rest
+	// write to corresponding note if exists
+	match &db.as_ref().corresponding_note_title {
+		Some(title) => {
+			resp.push(modules::AppendToNoteCommand {
+				name_contains: Cow::Borrowed(&title),
+				append: Cow::Borrowed(&to_append),
+				..Default::default()
+			});
+		}
+		None => {}
+	}
+
+	// whatever
 
 	Ok(())
 }

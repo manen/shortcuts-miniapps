@@ -247,6 +247,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "module_notes"
+version = "0.1.0"
+dependencies = [
+ "module_common",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "module_show"
 version = "0.1.0"
 dependencies = [
@@ -262,6 +271,7 @@ dependencies = [
  "module_calendar",
  "module_common",
  "module_execute",
+ "module_notes",
  "module_show",
 ]
 

@@ -7,4 +7,5 @@ edition = "2024"
 module_calendar.workspace = true
 module_common.workspace = true
 module_execute.workspace = true
+module_notes.workspace = true
 module_show.workspace = true
